@@ -5,7 +5,6 @@ import { GraphQLLocalStrategy } from "graphql-passport";
 export const passportConfig = async() => {
 
     passport.serializeUser((user, done) => {
-        console.log("serializeUser called with user:", user);
         done(null, user.id);
     });
 
@@ -13,10 +12,8 @@ export const passportConfig = async() => {
         console.log("deserializeUser called with id:", id);
         try {
             const user = await User.findById(id);
-            console.log("User found in deserializeUser:", user);
             done(null, user);
         } catch (err) {
-            console.error("Error in deserializeUser:", err);
             done(err, null);
         }
     });
