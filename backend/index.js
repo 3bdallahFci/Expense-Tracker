@@ -38,6 +38,7 @@ app.use(
     store: store,
     cookie: {
       maxAge: 1000 * 60 * 60 * 24 * 7, // 7 day
+      httpOnly: true,
     },
   }),
 );
@@ -54,7 +55,7 @@ const server = new ApolloServer({
 await server.start();
 
 app.use(
-  "/",
+  "/graphql",
   cors({
       origin: "http://localhost:5173",
       credentials: true,
@@ -68,4 +69,4 @@ app.use(
 await new Promise((resolve) => httpServer.listen({ port: 4000 }, resolve));
 await connectDB();
 
-console.log(`🚀 Server ready at http://localhost:4000/`);
+console.log(`🚀 Server ready at http://localhost:4000/graphql`);

@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import InputField from "../components/InputField";
-// import { useMutation } from "@apollo/client";
-// import { LOGIN } from "../graphql/mutations/user.mutation";
+import { useMutation } from "@apollo/client/react";
+import { LOGIN } from "../graphql/mutations/user.mutation.js";
 import toast from "react-hot-toast";
 
 const LoginPage = () => {
@@ -12,7 +12,7 @@ const LoginPage = () => {
 	});
 
 	const [login, { loading }] = useMutation(LOGIN, {
-		refetchQueries: ["GetAuthenticatedUser"],
+		refetchQueries: ["GetUser"],
 	});
 
 	const handleChange = (e) => {
@@ -28,6 +28,7 @@ const LoginPage = () => {
 		if (!loginData.username || !loginData.password) return toast.error("Please fill in all fields");
 		try {
 			await login({ variables: { input: loginData } });
+			toast.success("Login successful!");
 		} catch (error) {
 			console.error("Error logging in:", error);
 			toast.error(error.message);
@@ -43,7 +44,7 @@ const LoginPage = () => {
 						<h1 className='text-sm font-semibold mb-6 text-gray-500 text-center'>
 							Welcome back! Log in to your account
 						</h1>
-						<form className='space-y-4' onSubmit={handleSubmit}>
+						<form className='space-y-4' >
 							<InputField
 								label='Username'
 								id='username'
@@ -65,9 +66,9 @@ const LoginPage = () => {
 									type='submit'
 									className='w-full bg-black text-white p-2 rounded-md hover:bg-gray-800 focus:outline-none focus:bg-black  focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed
 									'
-									disabled={loading}
+									onClick={handleSubmit}
 								>
-									{loading ? "Loading..." : "Login"}
+									Login
 								</button>
 							</div>
 						</form>

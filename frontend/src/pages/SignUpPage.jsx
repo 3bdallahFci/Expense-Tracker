@@ -2,6 +2,9 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import RadioButton from "../components/RadioButton";
 import InputField from "../components/InputField";
+import { useMutation } from "@apollo/client/react";
+import { SigN_UP } from "../graphql/mutations/user.mutation.js";
+import toast from "react-hot-toast";
 
 const SignUpPage = () => {
 	const [signUpData, setSignUpData] = useState({
@@ -9,6 +12,10 @@ const SignUpPage = () => {
 		username: "",
 		password: "",
 		gender: "",
+	});
+
+	const [signUp,{loading,error}] = useMutation(SigN_UP,{
+		refetchQueries:["GetUser"],
 	});
 
 	const handleChange = (e) => {
@@ -29,7 +36,20 @@ const SignUpPage = () => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		console.log(signUpData);
+		try {
+			await signUp({ variables: { input: signUpData } });
+			toast.success("Sign up successful! You can now log in.");
+			setSignUpData({
+				name: "",
+				username: "",
+				password: "",
+				gender: "",
+			});
+		}
+		catch (err) {
+			console.error("Error signing up:", err);
+			toast.error("Failed to sign up. Please try again.");
+		}
 	};
 
 	return (
@@ -88,8 +108,9 @@ const SignUpPage = () => {
 								<button
 									type='submit'
 									className='w-full bg-black text-white p-2 rounded-md hover:bg-gray-800 focus:outline-none focus:bg-black  focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed'
+									disabled={loading}
 								>
-									Sign Up
+									{loading ? "Signing Up..." : "Sign Up"}
 								</button>
 							</div>
 						</form>
