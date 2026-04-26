@@ -9,6 +9,7 @@ import { LOGOUT } from "../graphql/mutations/user.mutation.js";
 import { useMutation } from "@apollo/client/react";
 import toast from "react-hot-toast";
 
+
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const HomePage = () => {
@@ -32,6 +33,7 @@ const HomePage = () => {
 	refetchQueries:["GetUser"],
 	});
 
+	
 	const handleLogout =async () => {
 		try {
 			await logout();

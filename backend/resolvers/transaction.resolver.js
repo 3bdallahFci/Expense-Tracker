@@ -10,9 +10,9 @@ const transactionResolver = {
           throw new Error("Unauthorized");
         }
 
-        const transactions = await transactions.find({ user: user._id });
+        const transactionsResponse = await transactions.find();
 
-        return transactions;
+        return transactionsResponse;
 
       } catch (error) {
         console.log(error);

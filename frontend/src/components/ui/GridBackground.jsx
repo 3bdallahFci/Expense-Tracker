@@ -1,19 +1,27 @@
 import { cn } from "../../utils/cn.js";
-import React, { Children } from "react";
+import React from "react";
 
 export function GridBackgroundDemo({ children }) {
   return (
-    <div
-      className='w-full bg-black text-white bg-grid-white/[0.2] relative'>
+    <div className="relative min-h-screen w-full bg-black text-white overflow-hidden">
+      
+      {/* GRID BACKGROUND */}
       <div
         className={cn(
-          "absolute inset-0",
+          "absolute inset-0 pointer-events-none opacity-40", // ⭐ visible now
           "[background-size:40px_40px]",
-          "[background-image:linear-gradient(to_right,#e4e4e7_1px,transparent_1px),linear-gradient(to_bottom,#e4e4e7_1px,transparent_1px)]",
-          "dark:[background-image:linear-gradient(to_right,#262626_1px,transparent_1px),linear-gradient(to_bottom,#262626_1px,transparent_1px)]"
-        )} />
-      {/* Radial gradient for the container to give a faded look */}
-	  {children}
-	  </div>
+          "[background-image:linear-gradient(to_right,#ffffff_1px,transparent_1px),linear-gradient(to_bottom,#ffffff_1px,transparent_1px)]"
+        )}
+      />
+
+      {/* DARK OVERLAY (makes grid subtle) */}
+      <div className="absolute inset-0 bg-black/60 pointer-events-none" />
+
+      {/* CONTENT LAYER */}
+      <div className="relative z-10">
+        {children}
+      </div>
+
+    </div>
   );
 }
