@@ -28,3 +28,13 @@ export const GET_TRANSACTION_BY_ID = gql`
         }
     }
 `;
+
+
+export const GET_CATEGORY_STATISTICS = gql`
+    query GetCategoryStatistics {
+        categoryStatistics {
+          category,
+          totalAmount
+        }
+    }
+`;

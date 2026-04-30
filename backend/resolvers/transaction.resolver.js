@@ -1,9 +1,8 @@
-import  transactions  from "../models/transaction.model.js";
+import transactions from "../models/transaction.model.js";
 const transactionResolver = {
   Query: {
-    transactions: async(_, __, context) => {
-      try{
-
+    transactions: async (_, __, context) => {
+      try {
         const user = context.getUser();
 
         if (!user) {
@@ -13,7 +12,6 @@ const transactionResolver = {
         const transactionsResponse = await transactions.find();
 
         return transactionsResponse;
-
       } catch (error) {
         console.log(error);
         throw new Error("Failed to fetch transactions");
@@ -21,8 +19,7 @@ const transactionResolver = {
     },
     transaction: async (_, { transactionId }) => {
       // Fetch a single transaction by ID from the database
-      try
-      {
+      try {
         const transaction = await transactions.findById(transactionId);
 
         if (!transaction) {
@@ -34,8 +31,35 @@ const transactionResolver = {
         throw new Error("Failed to fetch transaction");
       }
     },
-  },
 
+    categoryStatistics: async (_, __, context) => {
+      try {
+        const user = await context.getUser();
+        if (!user) throw new Error("Unauthorized");
+
+        const userId = user._id;
+
+        const transactionsList = await transactions.find({ user: userId });
+
+        const categoryMap = {};
+
+        transactionsList.forEach((transaction) => {
+          if (!categoryMap[transaction.category]) {
+            categoryMap[transaction.category] = 0;
+          }
+          categoryMap[transaction.category] += transaction.amount;
+        });
+
+        return Object.entries(categoryMap).map(([category, totalAmount]) => ({
+          category,
+          totalAmount,
+        }));
+      } catch (error) {
+        console.log(error);
+        throw new Error("Failed to fetch category statistics");
+      }
+    },
+  },
   Mutation: {
     createTransaction: async (_, { input }, context) => {
       try {
@@ -54,35 +78,37 @@ const transactionResolver = {
         console.log(error);
         throw new Error("Failed to create transaction");
       }
-
     },
     updateTransaction: async (_, { input }, context) => {
-        try {
-          const user = context.getUser();
-          if (!user) {
-            throw new Error("Unauthorized");
-          }
-          const updatedTransaction = await transactions.findByIdAndUpdate(input.transactionId, input, { new: true });
-          return updatedTransaction;
-        } catch (error) {
-          throw new Error("Failed to update transaction");
+      try {
+        const user = context.getUser();
+        if (!user) {
+          throw new Error("Unauthorized");
         }
+        const updatedTransaction = await transactions.findByIdAndUpdate(
+          input.transactionId,
+          input,
+          { new: true },
+        );
+        return updatedTransaction;
+      } catch (error) {
+        throw new Error("Failed to update transaction");
+      }
     },
     deleteTransaction: async (_, { transactionId }, context) => {
-        try {
-          const user = context.getUser();
-          if (!user) {  
-            throw new Error("Unauthorized");
-          }
-          const deletedTransaction = await transactions.findByIdAndDelete(transactionId);
-          return deletedTransaction;
+      try {
+        const user = context.getUser();
+        if (!user) {
+          throw new Error("Unauthorized");
         }
-          catch (error) {
-          throw new Error("Failed to delete transaction");
-        }
+        const deletedTransaction =
+          await transactions.findByIdAndDelete(transactionId);
+        return deletedTransaction;
+      } catch (error) {
+        throw new Error("Failed to delete transaction");
+      }
     },
   },
-
 };
 
 export default transactionResolver;
