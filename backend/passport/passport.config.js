@@ -9,7 +9,6 @@ export const passportConfig = async() => {
     });
 
     passport.deserializeUser(async (id, done) => {
-        console.log("deserializeUser called with id:", id);
         try {
             const user = await User.findById(id);
             done(null, user);
@@ -21,7 +20,7 @@ export const passportConfig = async() => {
     passport.use(new GraphQLLocalStrategy(async (username, password, done) => {
         try {
             const user = await User.findOne({ username });
-            console.log("User found in GraphQLLocalStrategy:", user);
+          
             if (!user) {
                 return done(null, false, { message: "Invalid credentials" });
             }

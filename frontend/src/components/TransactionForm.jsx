@@ -1,12 +1,13 @@
 import toast from "react-hot-toast";
 import { CREATE_TRANSACTION } from "../graphql/mutations/transaction.mutation.js";
 import { useMutation } from "@apollo/client/react";
+import { GET_CATEGORY_STATISTICS, GET_TRANSACTION } from "../graphql/queries/transaction.query.js";
 
 
 const TransactionForm = () => {
 
 	const [CreateTransaction,{loading:transactionLoading}] = useMutation(CREATE_TRANSACTION,{
-		refetchQueries:["GetTransactions"],
+		refetchQueries:[GET_TRANSACTION,GET_CATEGORY_STATISTICS],
 	});
 
 	const handleSubmit = async (e) => {

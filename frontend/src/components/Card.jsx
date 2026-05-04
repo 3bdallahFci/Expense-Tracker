@@ -6,11 +6,12 @@ import { FaTrash } from "react-icons/fa";
 import { HiPencilAlt } from "react-icons/hi";
 import { Link } from "react-router-dom";
 import { cn } from "../utils/cn";
-import { useMutation } from "@apollo/client/react";
+import { useMutation, useQuery } from "@apollo/client/react";
 import { DELETE_TRANSACTION } from "../graphql/mutations/transaction.mutation.js";
-import { GET_TRANSACTION } from "../graphql/queries/transaction.query.js";
+import { GET_CATEGORY_STATISTICS, GET_TRANSACTION } from "../graphql/queries/transaction.query.js";
 import { toast } from "react-hot-toast";
 import { formatDate } from "../utils/formatDate.js";
+import { GET_USER } from "../graphql/queries/user.query.js";
 
 // const getCategoryColor = (category) => {
 //   switch (category?.toLowerCase()) {
@@ -36,6 +37,7 @@ const categoryColorMap = {
 };
 
 
+
 const Card = ({ transactions }) => {
 	let { category, amount, location, date, paymentType, description } = transactions;
 	const cardClass = categoryColorMap[category];
@@ -45,8 +47,10 @@ const Card = ({ transactions }) => {
 		variables: {
 			transactionId: transactions._id
 		},
-		refetchQueries: [GET_TRANSACTION]
+		refetchQueries: [GET_TRANSACTION,GET_CATEGORY_STATISTICS]
 	});
+
+	const {data:user} = useQuery(GET_USER);
 
 	const handleDelete = async() => {
 		try {
@@ -90,7 +94,7 @@ const Card = ({ transactions }) => {
 				</p>
 				<div className='flex justify-between items-center'>
 					<p className='text-xs text-black font-bold'>{formattedDate}</p>
-					<img src={"https://tecdn.b-cdn.net/img/new/avatars/2.webp"} className='h-8 w-8 border rounded-full' alt='' />
+					<img src={user?.authUser.profilePicture} className='h-8 w-8 border rounded-full' alt='' />
 				</div>
 			</div>
 		</div>
